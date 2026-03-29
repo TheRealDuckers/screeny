@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Screeny — Serverless Screen Mirroring</title>
+  <style>
+    body { font-family: sans-serif; margin: 1rem; }
+    textarea { width: 100%; height: 120px; }
+    video { background: #000; max-width: 100%; }
+    .row { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .col { flex: 1 1 300px; min-width: 280px; }
+    button { margin: 0.25rem 0.25rem 0.25rem 0; }
+    h2 { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <h1>📺 Screeny — Screen Mirroring Without a Server</h1>
+
+  <div>
+    <button id="modeSender">Share My Screen</button>
+    <button id="modeReceiver">View a Screen</button>
+  </div>
+
+  <hr />
+
+  <!-- SENDER -->
+  <div id="senderPanel" style="display:none">
+    <h2>Screeny — Sender</h2>
+    <p>This device will share its screen.</p>
+
+    <button id="startShare">Start Sharing</button>
+    <button id="stopShare" disabled>Stop Sharing</button>
+    <button id="senderFullscreen">Fullscreen Preview</button>
+
+    <br /><br />
+    <video id="senderVideo" autoplay playsinline style="width: 400px;"></video>
+
+    <h3>Connection Setup</h3>
+    <div class="row">
+      <div class="col">
+        <h4>Offer (send to viewer)</h4>
+        <textarea id="senderOffer" readonly></textarea>
+        <button id="copySenderOffer">Copy Offer</button>
+      </div>
+      <div class="col">
+        <h4>Answer (paste from viewer)</h4>
+        <textarea id="senderAnswer"></textarea>
+        <button id="applySenderAnswer">Apply Answer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECEIVER -->
+  <div id="receiverPanel" style="display:none">
+    <h2>Screeny — Receiver</h2>
+    <p>This device will view the shared screen.</p>
+
+    <button id="receiverFullscreen">Fullscreen Remote</button>
+    <br /><br />
+    <video id="receiverVideo" autoplay playsinline style="width: 80vw;"></video>
+
+    <h3>Connection Setup</h3>
+    <div class="row">
+      <div class="col">
+        <h4>Offer (paste from sender)</h4>
+        <textarea id="receiverOffer"></textarea>
+        <button id="applyReceiverOffer">Apply Offer</button>
+      </div>
+      <div class="col">
+        <h4>Answer (send back to sender)</h4>
+        <textarea id="receiverAnswer" readonly></textarea>
+        <button id="copyReceiverAnswer">Copy Answer</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // UI switching
+    const senderPanel = document.getElementById('senderPanel');
+    const receiverPanel = document.getElementById('receiverPanel');
+
+    document.getElementById('modeSender').onclick = () => {
+      senderPanel.style.display = 'block';
+      receiverPanel.style.display = 'none';
+    };
+    document.getElementById('modeReceiver').onclick = () => {
+      senderPanel.style.display = 'none';
+      receiverPanel.style.display = 'block';
+    };
+
+    // --- SENDER ---
+    let senderPc = null;
+    let senderStream = null;
+
+    const senderVideo = document.getElementById('senderVideo');
+    const senderOfferEl = document.getElementById('senderOffer');
+    const senderAnswerEl = document.getElementById('senderAnswer');
+
+    async function startSender() {
+      senderPc = new RTCPeerConnection();
+
+      senderPc.onicecandidate = () => {
+        if (senderPc.localDescription) {
+          senderOfferEl.value = JSON.stringify(senderPc.localDescription);
+        }
+      };
+
+      senderStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      senderVideo.srcObject = senderStream;
+      senderStream.getTracks().forEach(t => senderPc.addTrack(t, senderStream));
+
+      const offer = await senderPc.createOffer();
+      await senderPc.setLocalDescription(offer);
+
+      document.getElementById('startShare').disabled = true;
+      document.getElementById('stopShare').disabled = false;
+    }
+
+    function stopSender() {
+      if (senderStream) senderStream.getTracks().forEach(t => t.stop());
+      if (senderPc) senderPc.close();
+
+      senderStream = null;
+      senderPc = null;
+      senderVideo.srcObject = null;
+      senderOfferEl.value = '';
+      senderAnswerEl.value = '';
+
+      document.getElementById('startShare').disabled = false;
+      document.getElementById('stopShare').disabled = true;
+    }
+
+    document.getElementById('startShare').onclick = startSender;
+    document.getElementById('stopShare').onclick = stopSender;
+
+    document.getElementById('copySenderOffer').onclick = () =>
+      navigator.clipboard.writeText(senderOfferEl.value);
+
+    document.getElementById('applySenderAnswer').onclick = async () => {
+      if (!senderPc) return alert('Start sharing first.');
+      try {
+        const answer = JSON.parse(senderAnswerEl.value);
+        await senderPc.setRemoteDescription(answer);
+      } catch {
+        alert('Invalid answer JSON');
+      }
+    };
+
+    // --- RECEIVER ---
+    let receiverPc = null;
+    const receiverVideo = document.getElementById('receiverVideo');
+    const receiverOfferEl = document.getElementById('receiverOffer');
+    const receiverAnswerEl = document.getElementById('receiverAnswer');
+
+    function initReceiverPc() {
+      receiverPc = new RTCPeerConnection();
+
+      receiverPc.ontrack = (event) => {
+        receiverVideo.srcObject = event.streams[0];
+      };
+
+      receiverPc.onicecandidate = () => {
+        if (receiverPc.localDescription) {
+          receiverAnswerEl.value = JSON.stringify(receiverPc.localDescription);
+        }
+      };
+    }
+
+    document.getElementById('applyReceiverOffer').onclick = async () => {
+      if (!receiverPc) initReceiverPc();
+      try {
+        const offer = JSON.parse(receiverOfferEl.value);
+        await receiverPc.setRemoteDescription(offer);
+        const answer = await receiverPc.createAnswer();
+        await receiverPc.setLocalDescription(answer);
+      } catch {
+        alert('Invalid offer JSON');
+      }
+    };
+
+    document.getElementById('copyReceiverAnswer').onclick = () =>
+      navigator.clipboard.writeText(receiverAnswerEl.value);
+
+    // --- Fullscreen ---
+    function goFullscreen(el) {
+      if (el.requestFullscreen) el.requestFullscreen();
+    }
+
+    document.getElementById('senderFullscreen').onclick = () => goFullscreen(senderVideo);
+    document.getElementById('receiverFullscreen').onclick = () => goFullscreen(receiverVideo);
+  </script>
+</body>
+</html>
