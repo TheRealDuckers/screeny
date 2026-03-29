@@ -3,28 +3,118 @@
 <head>
   <meta charset="UTF-8" />
   <title>Screeny — Serverless Screen Mirroring</title>
+
   <style>
-    body { font-family: sans-serif; margin: 1rem; }
-    textarea { width: 100%; height: 120px; }
-    video { background: #000; max-width: 100%; }
-    .row { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .col { flex: 1 1 300px; min-width: 280px; }
-    button { margin: 0.25rem 0.25rem 0.25rem 0; }
-    h2 { margin-top: 0; }
+    :root {
+      --bg: #0f1116;
+      --card: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.12);
+      --text: #e8e8e8;
+      --accent: #4da3ff;
+      --accent2: #7bc6ff;
+      --radius: 14px;
+      --transition: 0.25s ease;
+    }
+
+    body {
+      margin: 0;
+      padding: 2rem;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-weight: 600;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    h2, h3, h4 {
+      font-weight: 500;
+      color: var(--accent2);
+    }
+
+    button {
+      background: var(--accent);
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius);
+      color: #fff;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    button:hover {
+      background: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.7rem;
+      color: var(--text);
+      resize: none;
+      font-family: monospace;
+    }
+
+    video {
+      background: #000;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      max-width: 100%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    .panel {
+      width: min(900px, 95%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      backdrop-filter: blur(12px);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .col {
+      flex: 1 1 300px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
+
 <body>
-  <h1>📺 Screeny — Screen Mirroring Without a Server</h1>
+  <h1>📺 Screeny</h1>
+  <p>Beautiful, serverless, peer‑to‑peer screen mirroring.</p>
 
   <div>
     <button id="modeSender">Share My Screen</button>
     <button id="modeReceiver">View a Screen</button>
   </div>
 
-  <hr />
-
   <!-- SENDER -->
-  <div id="senderPanel" style="display:none">
+  <div id="senderPanel" class="panel" style="display:none">
     <h2>Screeny — Sender</h2>
     <p>This device will share its screen.</p>
 
@@ -51,7 +141,7 @@
   </div>
 
   <!-- RECEIVER -->
-  <div id="receiverPanel" style="display:none">
+  <div id="receiverPanel" class="panel" style="display:none">
     <h2>Screeny — Receiver</h2>
     <p>This device will view the shared screen.</p>
 
