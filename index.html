@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <title>Screeny — Code-based Screen Mirroring</title>
-
   <style>
     :root {
-      --bg: #050712;
-      --card: rgba(255,255,255,0.05);
-      --border: rgba(255,255,255,0.12);
-      --text: #f5f5f5;
-      --muted: #9ca3af;
-      --accent: #4da3ff;
-      --accent2: #7bc6ff;
+      --bg: #0d1117;
+      --card: #161b22;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --accent2: #79c0ff;
       --danger: #ff4d6a;
-      --radius: 16px;
+      --radius: 14px;
       --transition: 0.25s ease;
     }
 
@@ -22,209 +20,69 @@
 
     body {
       margin: 0;
-      padding: 2.5rem 1.5rem 3rem;
       background: radial-gradient(circle at top, #1b2340 0, #050712 55%);
       color: var(--text);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
       min-height: 100vh;
     }
 
-    h1 {
-      font-weight: 650;
-      margin-bottom: 0.4rem;
-      font-size: clamp(2.1rem, 3vw, 2.6rem);
-      background: linear-gradient(120deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      color: transparent;
-      letter-spacing: 0.03em;
-    }
-
-    .subtitle {
-      margin: 0 0 1.5rem;
-      color: var(--muted);
-      font-size: 0.98rem;
-    }
-
-    .top-bar {
-      display: flex;
+    .page {
+      display: none;
+      flex-direction: column;
       align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .pill {
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .pill-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: radial-gradient(circle, #4da3ff, #1b2340);
-    }
-
-    .mode-toggle {
-      display: inline-flex;
-      padding: 0.25rem;
-      border-radius: 999px;
-      background: rgba(15,17,22,0.9);
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(18px);
-    }
-
-    .mode-btn {
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      padding: 0.45rem 0.9rem;
-      border-radius: 999px;
-      font-size: 0.86rem;
-      cursor: pointer;
-      transition: var(--transition);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .mode-btn.active {
-      background: radial-gradient(circle at top left, var(--accent2), var(--accent));
-      color: #050712;
-      font-weight: 550;
-      box-shadow: 0 0 18px rgba(77,163,255,0.35);
-    }
-
-    .mode-btn span.icon { font-size: 1rem; }
-
-    .layout {
-      width: min(980px, 100%);
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2.2fr);
-      gap: 1.25rem;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 840px) {
-      .layout { grid-template-columns: minmax(0, 1fr); }
-    }
-
-    .panel {
-      background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(0,0,0,0.7));
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      padding: 1.3rem 1.4rem 1.4rem;
-      backdrop-filter: blur(18px);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+      text-align: center;
+      width: 100%;
+      max-width: 460px;
+      padding: 2.4rem 2rem 2.6rem;
+      background: var(--card);
+      border-radius: 20px;
+      border: 1px solid #30363d;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
       animation: fadeIn 0.35s ease;
     }
 
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.9rem;
+    .page.active { display: flex; }
+
+    h1 {
+      font-size: 2.3rem;
+      margin-bottom: 0.4rem;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      color: transparent;
     }
 
-    .panel-title {
-      font-size: 1.05rem;
-      font-weight: 550;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
+    h2 {
+      font-size: 1.6rem;
+      margin-bottom: 0.4rem;
     }
 
-    .panel-title span.badge {
-      font-size: 0.7rem;
-      padding: 0.1rem 0.5rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.18);
+    p {
       color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .panel-sub {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 0.9rem;
-    }
-
-    .field-group { margin-bottom: 0.9rem; }
-
-    label {
-      display: block;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .code-row {
-      display: flex;
-      gap: 0.6rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      min-width: 140px;
-      padding: 0.55rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(5,7,18,0.9);
-      color: var(--text);
+      margin-bottom: 1.8rem;
       font-size: 0.95rem;
-      outline: none;
-      transition: var(--transition);
-    }
-
-    input[type="text"]:focus {
-      border-color: var(--accent2);
-      box-shadow: 0 0 0 1px rgba(123,198,255,0.4);
-    }
-
-    .hint {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-top: 0.2rem;
     }
 
     button {
-      background: var(--accent);
+      width: 100%;
+      padding: 0.9rem;
+      margin-top: 0.8rem;
       border: none;
-      padding: 0.55rem 1.1rem;
-      border-radius: 999px;
-      color: #050712;
-      font-size: 0.9rem;
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #fff;
+      font-size: 1rem;
       cursor: pointer;
       transition: var(--transition);
-      font-weight: 540;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      white-space: nowrap;
+      font-weight: 500;
     }
 
     button:hover:not(:disabled) {
       background: var(--accent2);
-      transform: translateY(-1px);
-      box-shadow: 0 10px 22px rgba(77,163,255,0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 26px rgba(88,166,255,0.35);
     }
 
     button:disabled {
@@ -233,498 +91,447 @@
       box-shadow: none;
     }
 
-    .btn-ghost {
+    .secondary {
       background: transparent;
+      border: 1px solid #30363d;
       color: var(--muted);
-      border: 1px solid rgba(255,255,255,0.18);
+      margin-top: 1.2rem;
+    }
+
+    .secondary:hover:not(:disabled) {
+      background: #1f2933;
+      color: var(--text);
+      transform: translateY(-1px);
       box-shadow: none;
     }
 
-    .btn-ghost:hover:not(:disabled) {
-      background: rgba(255,255,255,0.06);
+    input {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: var(--radius);
+      border: 1px solid #30363d;
+      background: #0d1117;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+      font-size: 1rem;
+      outline: none;
+      text-align: center;
+      letter-spacing: 0.12em;
+    }
+
+    input:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 0 1px rgba(121,192,255,0.4);
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .status {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.6rem;
+      min-height: 1.2rem;
+    }
+
+    .status strong {
       color: var(--text);
     }
 
-    .btn-danger {
-      background: rgba(255,77,106,0.12);
-      color: #ff9aa9;
-      border: 1px solid rgba(255,77,106,0.5);
-      box-shadow: none;
-    }
-
-    .btn-danger:hover:not(:disabled) {
-      background: #ff4d6a;
-      color: #050712;
-      box-shadow: 0 10px 22px rgba(255,77,106,0.4);
-    }
-
-    video {
-      width: 100%;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: #000;
-      box-shadow: 0 14px 30px rgba(0,0,0,0.7);
-      max-height: 60vh;
-      object-fit: contain;
-    }
-
-    .video-shell { position: relative; margin-top: 0.4rem; }
-
-    .video-label {
-      position: absolute;
-      top: 0.55rem;
-      left: 0.7rem;
-      padding: 0.18rem 0.55rem;
-      border-radius: 999px;
-      background: rgba(0,0,0,0.6);
-      border: 1px solid rgba(255,255,255,0.18);
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-    }
-
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      margin-top: 0.8rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .status-pill {
+    .code-pill {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      padding: 0.2rem 0.6rem;
+      justify-content: center;
+      padding: 0.25rem 0.7rem;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(0,0,0,0.5);
+      border: 1px solid #30363d;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+      gap: 0.4rem;
     }
 
-    .status-dot {
+    .dot {
       width: 8px;
       height: 8px;
       border-radius: 999px;
       background: #6b7280;
     }
 
-    .status-dot.ok {
-      background: #4ade80;
-      box-shadow: 0 0 10px rgba(74,222,128,0.7);
+    .dot.ok { background: #4ade80; box-shadow: 0 0 10px rgba(74,222,128,0.7); }
+    .dot.warn { background: #facc15; box-shadow: 0 0 10px rgba(250,204,21,0.7); }
+    .dot.err { background: #f97373; box-shadow: 0 0 10px rgba(248,113,113,0.7); }
+
+    video {
+      width: 100%;
+      border-radius: var(--radius);
+      margin-top: 1rem;
+      background: #000;
+      border: 1px solid #30363d;
+      max-height: 55vh;
+      object-fit: contain;
     }
 
-    .status-dot.warn {
-      background: #facc15;
-      box-shadow: 0 0 10px rgba(250,204,21,0.7);
-    }
-
-    .status-dot.err {
-      background: #f97373;
-      box-shadow: 0 0 10px rgba(248,113,113,0.7);
-    }
-
-    .status-text-strong {
-      color: #e5e7eb;
-      font-weight: 500;
-    }
-
-    .footer {
-      margin-top: 2.2rem;
+    .small {
       font-size: 0.78rem;
       color: var(--muted);
-      text-align: center;
-      opacity: 0.8;
+      margin-top: 1.2rem;
     }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 
 <body>
-  <div class="top-bar">
-    <div class="pill">
-      <span class="pill-dot"></span>
-      WebRTC · Peer to Peer
-    </div>
-    <div class="mode-toggle">
-      <button id="modeSender" class="mode-btn active">
-        <span class="icon">📤</span>
-        Sender
-      </button>
-      <button id="modeReceiver" class="mode-btn">
-        <span class="icon">📥</span>
-        Viewer
-      </button>
-    </div>
-  </div>
 
+<!-- PAGE 1: ROLE SELECTION -->
+<div id="page1" class="page active">
   <h1>Screeny</h1>
-  <p class="subtitle">Beautiful, code‑based screen mirroring. Both devices enter the same code to connect.</p>
+  <p>Peer‑to‑peer screen mirroring with a simple pairing code.</p>
 
-  <div class="layout">
-    <!-- LEFT: VIDEO -->
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <span id="roleLabel">Sender Preview</span>
-          <span class="badge" id="roleBadge">You are sharing</span>
-        </div>
-        <button id="fullscreenBtn" class="btn-ghost" type="button">⛶ Fullscreen</button>
-      </div>
-      <p class="panel-sub" id="roleDescription">
-        Start sharing your screen, then ask the viewer to enter the same pairing code.
-      </p>
+  <button onclick="selectRole('sender')">Share My Screen</button>
+  <button onclick="selectRole('viewer')">View a Screen</button>
 
-      <div class="video-shell">
-        <span class="video-label" id="videoLabel">Local Screen</span>
-        <video id="mainVideo" autoplay playsinline></video>
-      </div>
+  <div class="small">No accounts. No installs. Just a code.</div>
+</div>
 
-      <div class="status-bar">
-        <div class="status-pill">
-          <span class="status-dot" id="connDot"></span>
-          <span id="connStatus">Not connected</span>
-        </div>
-        <div>
-          <span class="status-text-strong">Code:</span>
-          <span id="statusCode">—</span>
-        </div>
-      </div>
-    </div>
+<!-- PAGE 2: PAIRING CODE -->
+<div id="page2" class="page">
+  <h2>Pairing Code</h2>
+  <p>Both devices must use the same 4–10 digit code.</p>
 
-    <!-- RIGHT: CONTROLS -->
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          Connection
-          <span class="badge">Pairing</span>
-        </div>
-      </div>
+  <input id="pairCode" placeholder="123456" maxlength="10" />
+  <div class="hint">Digits only. Share this code with the other device.</div>
 
-      <p class="panel-sub">
-        Choose your role, enter a 4–10 digit code, and have the other device enter the same code.
-      </p>
+  <button id="generateBtn" onclick="generateCode()">Generate Code</button>
+  <button onclick="continueFromCode()">Continue</button>
 
-      <div class="field-group">
-        <label for="pairCode">Pairing code</label>
-        <div class="code-row">
-          <input id="pairCode" type="text" placeholder="e.g. 482913" maxlength="10" />
-          <button id="generateCode" type="button">🎲 Generate</button>
-        </div>
-        <div class="hint">
-          Use digits only. Share this code with the other device.
-        </div>
-      </div>
+  <button class="secondary" onclick="goToPage(1)">Back</button>
+</div>
 
-      <div class="field-group" id="senderControls">
-        <label>Sender controls</label>
-        <div class="code-row">
-          <button id="startShare" type="button">📤 Start sharing</button>
-          <button id="stopShare" class="btn-danger" type="button" disabled>■ Stop</button>
-        </div>
-        <div class="hint">
-          Your screen will be captured and streamed to the viewer once connected.
-        </div>
-      </div>
-
-      <div class="field-group" id="receiverControls" style="display:none">
-        <label>Viewer controls</label>
-        <div class="code-row">
-          <button id="connectViewer" type="button">📥 Connect to sender</button>
-          <button id="disconnectViewer" class="btn-danger" type="button" disabled>■ Disconnect</button>
-        </div>
-        <div class="hint">
-          Enter the same code as the sender, then click connect.
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label>Status</label>
-        <div class="hint" id="logLine">
-          Waiting for a code…
-        </div>
-      </div>
-    </div>
+<!-- PAGE 3: SENDER -->
+<div id="senderPage" class="page">
+  <h2>Share Screen</h2>
+  <div class="code-pill">
+    <span class="dot" id="senderDot"></span>
+    <span id="senderCodeLabel">Code: —</span>
   </div>
+  <p id="senderStatus">Not connected</p>
 
-  <div class="footer">
-    Screeny uses WebRTC for peer‑to‑peer streaming. A lightweight signaling server matches devices by code.
+  <button id="startShareBtn" onclick="startSender()">Start Sharing</button>
+  <button id="stopShareBtn" onclick="stopAll()" disabled>Stop & Disconnect</button>
+
+  <video id="senderVideo" autoplay playsinline></video>
+
+  <button class="secondary" onclick="backToCode()">Back</button>
+  <div class="small">Your screen is sent directly to the viewer using WebRTC.</div>
+</div>
+
+<!-- PAGE 3: VIEWER -->
+<div id="viewerPage" class="page">
+  <h2>View Screen</h2>
+  <div class="code-pill">
+    <span class="dot" id="viewerDot"></span>
+    <span id="viewerCodeLabel">Code: —</span>
   </div>
+  <p id="viewerStatus">Not connected</p>
 
-  <script>
-    // --- UI ELEMENTS ---
-    const modeSenderBtn = document.getElementById('modeSender');
-    const modeReceiverBtn = document.getElementById('modeReceiver');
-    const roleLabel = document.getElementById('roleLabel');
-    const roleBadge = document.getElementById('roleBadge');
-    const roleDescription = document.getElementById('roleDescription');
-    const videoLabel = document.getElementById('videoLabel');
-    const mainVideo = document.getElementById('mainVideo');
-    const fullscreenBtn = document.getElementById('fullscreenBtn');
+  <button id="connectBtn" onclick="startViewer()">Connect to Sender</button>
+  <button id="disconnectBtn" onclick="stopAll()" disabled>Disconnect</button>
 
-    const pairCodeInput = document.getElementById('pairCode');
-    const generateCodeBtn = document.getElementById('generateCode');
+  <video id="viewerVideo" autoplay playsinline></video>
 
-    const senderControls = document.getElementById('senderControls');
-    const receiverControls = document.getElementById('receiverControls');
+  <button class="secondary" onclick="backToCode()">Back</button>
+  <div class="small">Once connected, the sender’s screen will appear here.</div>
+</div>
 
-    const startShareBtn = document.getElementById('startShare');
-    const stopShareBtn = document.getElementById('stopShare');
-    const connectViewerBtn = document.getElementById('connectViewer');
-    const disconnectViewerBtn = document.getElementById('disconnectViewer');
+<script>
+  // --- BASIC PAGE FLOW ---
+  let role = null;
 
-    const connDot = document.getElementById('connDot');
-    const connStatus = document.getElementById('connStatus');
-    const statusCode = document.getElementById('statusCode');
-    const logLine = document.getElementById('logLine');
+  function goToPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    if (id === 1) document.getElementById('page1').classList.add('active');
+    if (id === 2) document.getElementById('page2').classList.add('active');
+  }
 
-    // --- STATE ---
-    let isSender = true;
-    let ws = null;
-    let wsOpen = false;
-    let currentCode = '';
-    let senderPc = null;
-    let receiverPc = null;
-    let senderStream = null;
+  function selectRole(r) {
+    role = r;
+    // hide generate for viewer
+    document.getElementById('generateBtn').style.display =
+      role === 'sender' ? 'block' : 'none';
+    goToPage(2);
+  }
 
-    // CHANGE THIS to your server URL (ws or wss)
-    const SIGNAL_URL = 'ws://localhost:8080';
+  function backToCode() {
+    stopAll();
+    goToPage(2);
+  }
 
-    // --- HELPERS ---
-    function setMode(sender) {
-      isSender = sender;
-      modeSenderBtn.classList.toggle('active', sender);
-      modeReceiverBtn.classList.toggle('active', !sender);
+  function generateCode() {
+    const code = String(Math.floor(1000 + Math.random() * 900000));
+    document.getElementById('pairCode').value = code;
+  }
 
-      senderControls.style.display = sender ? 'block' : 'none';
-      receiverControls.style.display = sender ? 'none' : 'block';
+  function validateCode() {
+    const code = document.getElementById('pairCode').value.trim();
+    if (!/^[0-9]{4,10}$/.test(code)) {
+      alert('Please enter a numeric code between 4 and 10 digits.');
+      return null;
+    }
+    return code;
+  }
 
-      if (sender) {
-        roleLabel.textContent = 'Sender Preview';
-        roleBadge.textContent = 'You are sharing';
-        roleDescription.textContent = 'Start sharing your screen, then ask the viewer to enter the same pairing code.';
-        videoLabel.textContent = 'Local Screen';
+  function continueFromCode() {
+    const code = validateCode();
+    if (!code) return;
+
+    if (role === 'sender') {
+      document.getElementById('senderCodeLabel').textContent = 'Code: ' + code;
+      document.getElementById('senderStatus').textContent = 'Ready to share.';
+      setDot('senderDot', null);
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('senderPage').classList.add('active');
+    } else {
+      document.getElementById('viewerCodeLabel').textContent = 'Code: ' + code;
+      document.getElementById('viewerStatus').textContent = 'Ready to connect.';
+      setDot('viewerDot', null);
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('viewerPage').classList.add('active');
+    }
+  }
+
+  function setDot(id, state) {
+    const el = document.getElementById(id);
+    el.classList.remove('ok', 'warn', 'err');
+    if (state === 'ok') el.classList.add('ok');
+    if (state === 'warn') el.classList.add('warn');
+    if (state === 'err') el.classList.add('err');
+  }
+
+  // --- WEBRTC + SIGNALING STATE ---
+  const SIGNAL_URL = 'ws://localhost:8080'; // change to wss://your-domain in prod
+
+  let ws = null;
+  let wsOpen = false;
+  let currentCode = '';
+
+  let senderPc = null;
+  let receiverPc = null;
+  let senderStream = null;
+
+  const senderVideo = document.getElementById('senderVideo');
+  const viewerVideo = document.getElementById('viewerVideo');
+
+  const senderStatus = document.getElementById('senderStatus');
+  const viewerStatus = document.getElementById('viewerStatus');
+  const startShareBtn = document.getElementById('startShareBtn');
+  const stopShareBtn = document.getElementById('stopShareBtn');
+  const connectBtn = document.getElementById('connectBtn');
+  const disconnectBtn = document.getElementById('disconnectBtn');
+
+  function ensureWebSocket(code) {
+    if (ws && wsOpen && currentCode === code) return;
+
+    if (ws) {
+      ws.close();
+      ws = null;
+      wsOpen = false;
+    }
+
+    currentCode = code;
+
+    ws = new WebSocket(SIGNAL_URL);
+
+    ws.onopen = () => {
+      wsOpen = true;
+      sendSignal({ type: 'join', code });
+      if (role === 'sender') {
+        senderStatus.textContent = 'Connected to signaling. Waiting for viewer…';
+        setDot('senderDot', 'warn');
       } else {
-        roleLabel.textContent = 'Viewer';
-        roleBadge.textContent = 'You are viewing';
-        roleDescription.textContent = 'Enter the same pairing code as the sender, then connect to view their screen.';
-        videoLabel.textContent = 'Remote Screen';
+        viewerStatus.textContent = 'Connected to signaling. Waiting for sender…';
+        setDot('viewerDot', 'warn');
       }
+    };
 
-      resetConnectionState();
-    }
-
-    function setConnectionStatus(text, state) {
-      connStatus.textContent = text;
-      connDot.classList.remove('ok', 'warn', 'err');
-      if (state === 'ok') connDot.classList.add('ok');
-      else if (state === 'warn') connDot.classList.add('warn');
-      else if (state === 'err') connDot.classList.add('err');
-    }
-
-    function log(msg) {
-      logLine.textContent = msg;
-      console.log('[Screeny]', msg);
-    }
-
-    function validateCode() {
-      const code = pairCodeInput.value.trim();
-      if (!/^[0-9]{4,10}$/.test(code)) {
-        alert('Please enter a numeric code between 4 and 10 digits.');
-        return null;
+    ws.onclose = () => {
+      wsOpen = false;
+      if (role === 'sender') {
+        senderStatus.textContent = 'Signaling disconnected.';
+        setDot('senderDot', 'err');
+      } else {
+        viewerStatus.textContent = 'Signaling disconnected.';
+        setDot('viewerDot', 'err');
       }
-      return code;
-    }
+    };
 
-    function ensureWebSocket(code) {
-      if (ws && wsOpen && currentCode === code) return;
-
-      if (ws) {
-        ws.close();
-        ws = null;
-        wsOpen = false;
+    ws.onerror = () => {
+      if (role === 'sender') {
+        senderStatus.textContent = 'Signaling error.';
+        setDot('senderDot', 'err');
+      } else {
+        viewerStatus.textContent = 'Signaling error.';
+        setDot('viewerDot', 'err');
       }
+    };
 
-      currentCode = code;
-      statusCode.textContent = code;
-      setConnectionStatus('Connecting…', 'warn');
-      log('Connecting to signaling server…');
+    ws.onmessage = async (event) => {
+      const msg = JSON.parse(event.data || '{}');
+      if (!msg || msg.code !== currentCode) return;
 
-      ws = new WebSocket(SIGNAL_URL);
+      if (msg.role && msg.role === role) return;
 
-      ws.onopen = () => {
-        wsOpen = true;
-        log('Connected to signaling server. Joining code ' + code + '…');
-        sendSignal({ type: 'join', code });
-      };
-
-      ws.onclose = () => {
-        wsOpen = false;
-        setConnectionStatus('Disconnected', 'err');
-        log('Signaling connection closed.');
-      };
-
-      ws.onerror = (e) => {
-        console.error(e);
-        setConnectionStatus('Error', 'err');
-        log('Signaling error. Check console.');
-      };
-
-      ws.onmessage = async (event) => {
-        const msg = JSON.parse(event.data || '{}');
-        if (!msg || msg.code !== currentCode) return;
-
-        if (msg.role && msg.role === (isSender ? 'sender' : 'viewer')) {
-          return;
+      if (msg.type === 'joined') {
+        if (role === 'sender') {
+          senderStatus.textContent = 'Viewer joined. Start sharing when ready.';
+          setDot('senderDot', 'warn');
+        } else {
+          viewerStatus.textContent = 'Sender joined. Waiting for offer…';
+          setDot('viewerDot', 'warn');
         }
-
-        if (msg.type === 'joined') {
-          setConnectionStatus('Waiting for peer…', 'warn');
-          log('Joined code ' + currentCode + '. Waiting for the other device.');
-        }
-
-        if (msg.type === 'offer' && !isSender) {
-          log('Received offer. Creating answer…');
-          await handleRemoteOffer(msg.sdp);
-        }
-
-        if (msg.type === 'answer' && isSender) {
-          log('Received answer. Completing connection…');
-          await handleRemoteAnswer(msg.sdp);
-        }
-
-        if (msg.type === 'ice-candidate') {
-          await handleRemoteIce(msg.candidate);
-        }
-      };
-    }
-
-    function sendSignal(payload) {
-      if (!ws || !wsOpen) return;
-      const msg = { code: currentCode, role: isSender ? 'sender' : 'viewer', ...payload };
-      ws.send(JSON.stringify(msg));
-    }
-
-    function resetConnectionState() {
-      statusCode.textContent = currentCode || '—';
-      setConnectionStatus('Not connected', null);
-      log('Waiting for a code…');
-      if (mainVideo.srcObject) {
-        mainVideo.srcObject = null;
       }
-    }
 
-    function cleanupSender() {
-      if (senderStream) {
-        senderStream.getTracks().forEach(t => t.stop());
-        senderStream = null;
+      if (msg.type === 'offer' && role === 'viewer') {
+        viewerStatus.textContent = 'Received offer. Creating answer…';
+        await handleRemoteOffer(msg.sdp);
       }
-      if (senderPc) {
-        senderPc.onicecandidate = null;
-        senderPc.onconnectionstatechange = null;
-        senderPc.close();
-        senderPc = null;
-      }
-      startShareBtn.disabled = false;
-      stopShareBtn.disabled = true;
-    }
 
-    function cleanupReceiver() {
-      if (receiverPc) {
-        receiverPc.onicecandidate = null;
-        receiverPc.ontrack = null;
-        receiverPc.onconnectionstatechange = null;
-        receiverPc.close();
-        receiverPc = null;
+      if (msg.type === 'answer' && role === 'sender') {
+        senderStatus.textContent = 'Received answer. Finalizing connection…';
+        await handleRemoteAnswer(msg.sdp);
       }
-      connectViewerBtn.disabled = false;
-      disconnectViewerBtn.disabled = true;
-    }
 
-    function fullCleanup() {
+      if (msg.type === 'ice-candidate') {
+        await handleRemoteIce(msg.candidate);
+      }
+    };
+  }
+
+  function sendSignal(payload) {
+    if (!ws || !wsOpen) return;
+    const msg = { code: currentCode, role, ...payload };
+    ws.send(JSON.stringify(msg));
+  }
+
+  // --- SENDER LOGIC ---
+  async function startSender() {
+    const code = validateCode();
+    if (!code) return;
+
+    ensureWebSocket(code);
+
+    senderPc = new RTCPeerConnection();
+
+    senderPc.onicecandidate = (event) => {
+      if (event.candidate) {
+        sendSignal({ type: 'ice-candidate', candidate: event.candidate });
+      }
+    };
+
+    senderPc.onconnectionstatechange = () => {
+      const state = senderPc.connectionState;
+      if (state === 'connected') {
+        senderStatus.textContent = 'Connected. Your screen is being shared.';
+        setDot('senderDot', 'ok');
+      } else if (state === 'disconnected' || state === 'failed') {
+        senderStatus.textContent = 'Connection lost.';
+        setDot('senderDot', 'err');
+      }
+    };
+
+    try {
+      senderStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+      senderVideo.srcObject = senderStream;
+      senderStream.getTracks().forEach(t => senderPc.addTrack(t, senderStream));
+
+      const offer = await senderPc.createOffer();
+      await senderPc.setLocalDescription(offer);
+
+      sendSignal({ type: 'offer', sdp: offer });
+      senderStatus.textContent = 'Offer sent. Waiting for answer…';
+      setDot('senderDot', 'warn');
+
+      startShareBtn.disabled = true;
+      stopShareBtn.disabled = false;
+    } catch (err) {
+      console.error(err);
+      alert('Could not start screen sharing.');
       cleanupSender();
-      cleanupReceiver();
-      if (ws) {
-        ws.close();
-        ws = null;
-        wsOpen = false;
-      }
-      currentCode = '';
-      statusCode.textContent = '—';
-      setConnectionStatus('Not connected', null);
-      log('Disconnected.');
-      mainVideo.srcObject = null;
     }
+  }
 
-    // --- SENDER LOGIC ---
-    async function startSender() {
-      const code = validateCode();
-      if (!code) return;
-
-      ensureWebSocket(code);
-
-      senderPc = new RTCPeerConnection();
-
-      senderPc.onicecandidate = (event) => {
-        if (event.candidate) {
-          sendSignal({ type: 'ice-candidate', candidate: event.candidate });
-        }
-      };
-
-      senderPc.onconnectionstatechange = () => {
-        const state = senderPc.connectionState;
-        if (state === 'connected') {
-          setConnectionStatus('Connected', 'ok');
-          log('Peer connection established.');
-        } else if (state === 'disconnected' || state === 'failed') {
-          setConnectionStatus('Disconnected', 'err');
-          log('Peer connection lost.');
-        }
-      };
-
-      try {
-        senderStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
-        mainVideo.srcObject = senderStream;
-        senderStream.getTracks().forEach(t => senderPc.addTrack(t, senderStream));
-
-        const offer = await senderPc.createOffer();
-        await senderPc.setLocalDescription(offer);
-
-        sendSignal({ type: 'offer', sdp: offer });
-        setConnectionStatus('Calling…', 'warn');
-        log('Offer sent. Waiting for answer…');
-
-        startShareBtn.disabled = true;
-        stopShareBtn.disabled = false;
-      } catch (err) {
-        console.error(err);
-        alert('Could not start screen sharing.');
-        cleanupSender();
-      }
+  async function handleRemoteAnswer(answer) {
+    if (!senderPc) return;
+    try {
+      await senderPc.setRemoteDescription(new RTCSessionDescription(answer));
+    } catch (err) {
+      console.error(err);
     }
+  }
 
-    async function handleRemoteAnswer(answer) {
-      if (!senderPc) return;
-      try {
-        await senderPc.setRemoteDescription(new RTCSessionDescription(answer));
-      } catch (err) {
-        console.error(err);
-      }
+  function cleanupSender() {
+    if (senderStream) {
+      senderStream.getTracks().forEach(t => t.stop());
+      senderStream = null;
     }
+    if (senderPc) {
+      senderPc.onicecandidate = null;
+      senderPc.onconnectionstatechange = null;
+      senderPc.close();
+      senderPc = null;
+    }
+    senderVideo.srcObject = null;
+    startShareBtn.disabled = false;
+    stopShareBtn.disabled = true;
+    senderStatus.textContent = 'Not connected';
+    setDot('senderDot', null);
+  }
 
-    // --- RECEIVER LOGIC ---
-    async function connectViewer() {
-      const code = validateCode();
-      if (!code) return;
+  // --- VIEWER LOGIC ---
+  async function startViewer() {
+    const code = validateCode();
+    if (!code) return;
 
-      ensureWebSocket(code);
+    ensureWebSocket(code);
 
+    receiverPc = new RTCPeerConnection();
+
+    receiverPc.onicecandidate = (event) => {
+      if (event.candidate) {
+        sendSignal({ type: 'ice-candidate', candidate: event.candidate });
+      }
+    };
+
+    receiverPc.ontrack = (event) => {
+      viewerVideo.srcObject = event.streams[0];
+    };
+
+    receiverPc.onconnectionstatechange = () => {
+      const state = receiverPc.connectionState;
+      if (state === 'connected') {
+        viewerStatus.textContent = 'Connected. Viewing remote screen.';
+        setDot('viewerDot', 'ok');
+      } else if (state === 'disconnected' || state === 'failed') {
+        viewerStatus.textContent = 'Connection lost.';
+        setDot('viewerDot', 'err');
+      }
+    };
+
+    connectBtn.disabled = true;
+    disconnectBtn.disabled = false;
+    viewerStatus.textContent = 'Waiting for sender offer…';
+    setDot('viewerDot', 'warn');
+  }
+
+  async function handleRemoteOffer(offer) {
+    if (!receiverPc) {
       receiverPc = new RTCPeerConnection();
 
       receiverPc.onicecandidate = (event) => {
@@ -734,101 +541,70 @@
       };
 
       receiverPc.ontrack = (event) => {
-        mainVideo.srcObject = event.streams[0];
+        viewerVideo.srcObject = event.streams[0];
       };
 
       receiverPc.onconnectionstatechange = () => {
         const state = receiverPc.connectionState;
         if (state === 'connected') {
-          setConnectionStatus('Connected', 'ok');
-          log('Viewing remote screen.');
+          viewerStatus.textContent = 'Connected. Viewing remote screen.';
+          setDot('viewerDot', 'ok');
         } else if (state === 'disconnected' || state === 'failed') {
-          setConnectionStatus('Disconnected', 'err');
-          log('Peer connection lost.');
+          viewerStatus.textContent = 'Connection lost.';
+          setDot('viewerDot', 'err');
         }
       };
-
-      connectViewerBtn.disabled = true;
-      disconnectViewerBtn.disabled = false;
-      setConnectionStatus('Waiting for sender…', 'warn');
-      log('Connected to signaling. Waiting for sender offer…');
     }
 
-    async function handleRemoteOffer(offer) {
-      if (!receiverPc) {
-        receiverPc = new RTCPeerConnection();
-
-        receiverPc.onicecandidate = (event) => {
-          if (event.candidate) {
-            sendSignal({ type: 'ice-candidate', candidate: event.candidate });
-          }
-        };
-
-        receiverPc.ontrack = (event) => {
-          mainVideo.srcObject = event.streams[0];
-        };
-
-        receiverPc.onconnectionstatechange = () => {
-          const state = receiverPc.connectionState;
-          if (state === 'connected') {
-            setConnectionStatus('Connected', 'ok');
-            log('Viewing remote screen.');
-          } else if (state === 'disconnected' || state === 'failed') {
-            setConnectionStatus('Disconnected', 'err');
-            log('Peer connection lost.');
-          }
-        };
-      }
-
-      try {
-        await receiverPc.setRemoteDescription(new RTCSessionDescription(offer));
-        const answer = await receiverPc.createAnswer();
-        await receiverPc.setLocalDescription(answer);
-        sendSignal({ type: 'answer', sdp: answer });
-        setConnectionStatus('Connecting…', 'warn');
-        log('Answer sent. Finalizing connection…');
-      } catch (err) {
-        console.error(err);
-      }
+    try {
+      await receiverPc.setRemoteDescription(new RTCSessionDescription(offer));
+      const answer = await receiverPc.createAnswer();
+      await receiverPc.setLocalDescription(answer);
+      sendSignal({ type: 'answer', sdp: answer });
+      viewerStatus.textContent = 'Answer sent. Finalizing connection…';
+      setDot('viewerDot', 'warn');
+    } catch (err) {
+      console.error(err);
     }
+  }
 
-    async function handleRemoteIce(candidate) {
-      const pc = isSender ? senderPc : receiverPc;
-      if (!pc || !candidate) return;
-      try {
-        await pc.addIceCandidate(new RTCIceCandidate(candidate));
-      } catch (err) {
-        console.error(err);
-      }
+  async function handleRemoteIce(candidate) {
+    const pc = role === 'sender' ? senderPc : receiverPc;
+    if (!pc || !candidate) return;
+    try {
+      await pc.addIceCandidate(new RTCIceCandidate(candidate));
+    } catch (err) {
+      console.error(err);
     }
+  }
 
-    // --- EVENTS ---
-    modeSenderBtn.onclick = () => setMode(true);
-    modeReceiverBtn.onclick = () => setMode(false);
+  function cleanupViewer() {
+    if (receiverPc) {
+      receiverPc.onicecandidate = null;
+      receiverPc.ontrack = null;
+      receiverPc.onconnectionstatechange = null;
+      receiverPc.close();
+      receiverPc = null;
+    }
+    viewerVideo.srcObject = null;
+    connectBtn.disabled = false;
+    disconnectBtn.disabled = true;
+    viewerStatus.textContent = 'Not connected';
+    setDot('viewerDot', null);
+  }
 
-    generateCodeBtn.onclick = () => {
-      const code = String(Math.floor(1000 + Math.random() * 900000)).slice(0, 6);
-      pairCodeInput.value = code;
-      statusCode.textContent = code;
-      log('Generated code ' + code + '. Use this on both devices.');
-    };
+  // --- GLOBAL CLEANUP ---
+  function stopAll() {
+    cleanupSender();
+    cleanupViewer();
+    if (ws) {
+      ws.close();
+      ws = null;
+      wsOpen = false;
+    }
+    currentCode = '';
+  }
+</script>
 
-    startShareBtn.onclick = startSender;
-    stopShareBtn.onclick = () => {
-      fullCleanup();
-    };
-
-    connectViewerBtn.onclick = connectViewer;
-    disconnectViewerBtn.onclick = () => {
-      fullCleanup();
-    };
-
-    fullscreenBtn.onclick = () => {
-      if (mainVideo.requestFullscreen) mainVideo.requestFullscreen();
-    };
-
-    // Initial state
-    setMode(true);
-  </script>
 </body>
 </html>
